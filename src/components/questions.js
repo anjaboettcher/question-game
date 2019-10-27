@@ -1,4 +1,4 @@
-export const questionData = [
+export default [
   {
     id: 0,
     question: `What is the Italian word for pie?`,
@@ -15,7 +15,7 @@ export const questionData = [
     id: 3,
     question: `Which sea creature has three hearts?`,
     options: [ `Shark`, `Jellyfish`, `Anglerfish`,`Octopus`],
-    answer: `Jeff Bezo`
+    answer: `Octopus`
   },
   {
     id: 4,
