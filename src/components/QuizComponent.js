@@ -7,6 +7,9 @@ function QuizComponent() {
   const [position, setPosition] = useState(0)
   const [score, setScore] = useState(0)
   const [counter, setCounter] = useState(15);
+  const [extraTimeisClicked, setExtraTimeisClicked] = useState(false)
+  const [fiftyFiftyIsClicked, setFiftyFiftyIsClicked] = useState(false)
+  const [mutedOptions, setMutedOptions] = useState([]);
 
   useEffect(() => setQuestions(shuffle(originalQuestions)), [])
 
@@ -21,6 +24,9 @@ function QuizComponent() {
     setQuestions(shuffle(originalQuestions))
     setPosition(0)
     setScore(0)
+    setExtraTimeisClicked(false)
+    setFiftyFiftyIsClicked(false)
+    setMutedOptions([])
   }
 
   useEffect(() => {
@@ -43,6 +49,29 @@ function QuizComponent() {
     };
   }, [position]);
 
+  function toggleExtraTime() {
+    extraTimeisClicked ? setExtraTimeisClicked(false) : setExtraTimeisClicked(true);
+  }
+
+  function getAdditionalTime () {
+    setCounter(c => { return c + 10})
+    toggleExtraTime()
+  }
+
+  function toggleFiftyFifty() {
+    fiftyFiftyIsClicked ? setFiftyFiftyIsClicked(false) : setFiftyFiftyIsClicked(true);
+  }
+
+  function removeWrongAnswers () {
+    const excluded = Math.floor(Math.random() * 3)
+    const muted = 
+      questions[position].options
+        .filter(option => option !== questions[position].answer)
+        .filter((option, i) => i !== excluded)
+    setMutedOptions(muted)
+    toggleFiftyFifty()
+  }
+
   if (position < questions.length) {
     const question = questions[position]
 
@@ -51,12 +80,14 @@ function QuizComponent() {
         <h1>Welcome to the quiz game!</h1>
         <div className="container">
           <h3>{question.question}</h3>
+          Joker: <span onClick={() => removeWrongAnswers()}>{fiftyFiftyIsClicked ? <button disabled>50/50</button> : <button>50/50</button>}</span>
+          <span onClick={() => getAdditionalTime()}>{extraTimeisClicked ? <button disabled>+10 sek</button> : <button>+10 sek</button>}</span> {" | "}
           Score: <span>{score}</span>
           {" | "}
           Time remaining: <span>{counter}</span>
           <hr />
           {question.options.map(option => {
-            return (
+            return mutedOptions.includes(option) ? null : (
               <p
                 key={option.id}
                 className=""
