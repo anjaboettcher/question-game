@@ -4,26 +4,24 @@ import shuffle from '../utils/shuffle'
 
 function QuizComponent() {
   const [questions, setQuestions] = useState([])
-  const [position, setPosition] = useState(0)
-  const [score, setScore] = useState(0)
+  const [answers, setAnswers] = useState([])
   const [counter, setCounter] = useState(15);
   const [extraTimeisClicked, setExtraTimeisClicked] = useState(false)
   const [fiftyFiftyIsClicked, setFiftyFiftyIsClicked] = useState(false)
   const [mutedOptions, setMutedOptions] = useState([]);
 
+  const question = questions[answers.length]
+  const score = answers.filter((a, i) => a.answer === questions[i].answer).length
+
   useEffect(() => setQuestions(shuffle(originalQuestions)), [])
 
   function checkAnswer(answer) {
-    if (answer === questions[position].answer) {
-      setScore(score + 1)
-    }
-    setPosition(position + 1)
+    setAnswers([ ...answers, { answer, counter } ])
   }
 
   function restartGame() {
     setQuestions(shuffle(originalQuestions))
-    setPosition(0)
-    setScore(0)
+    setAnswers([])
     setExtraTimeisClicked(false)
     setFiftyFiftyIsClicked(false)
     setMutedOptions([])
@@ -35,7 +33,7 @@ function QuizComponent() {
     function tick() {
       setCounter(c => {
         if (c === 1) {
-          setPosition(p => p + 1)
+          setAnswers([ ...answers, { answer: undefined, counter: 0 } ])
         }
   
         return c - 1;
@@ -47,54 +45,58 @@ function QuizComponent() {
     return function cleanup() {
       clearInterval(timerID);
     };
-  }, [position]);
-
-  function toggleExtraTime() {
-    extraTimeisClicked ? setExtraTimeisClicked(false) : setExtraTimeisClicked(true);
-  }
+  }, [answers]);
 
   function getAdditionalTime () {
-    setCounter(c => { return c + 10})
-    toggleExtraTime()
-  }
-
-  function toggleFiftyFifty() {
-    fiftyFiftyIsClicked ? setFiftyFiftyIsClicked(false) : setFiftyFiftyIsClicked(true);
+    setCounter(c => { return c + 10 })
+    setExtraTimeisClicked(true);
   }
 
   function removeWrongAnswers () {
     const excluded = Math.floor(Math.random() * 3)
     const muted = 
-      questions[position].options
-        .filter(option => option !== questions[position].answer)
+      question.options
+        .filter(option => option !== question.answer)
         .filter((option, i) => i !== excluded)
     setMutedOptions(muted)
-    toggleFiftyFifty()
+    setFiftyFiftyIsClicked(true);
   }
 
-  if (position < questions.length) {
-    const question = questions[position]
-
+  if (question) {
     return (
       <div>
         <h1>Welcome to the quiz game!</h1>
         <div className="container">
           <h3>{question.question}</h3>
-          Joker: <span onClick={() => removeWrongAnswers()}>{fiftyFiftyIsClicked ? <button disabled>50/50</button> : <button>50/50</button>}</span>
-          <span onClick={() => getAdditionalTime()}>{extraTimeisClicked ? <button disabled>+10 sek</button> : <button>+10 sek</button>}</span> {" | "}
+          Joker: 
+          <button 
+            disabled={fiftyFiftyIsClicked} 
+            onClick={removeWrongAnswers}>
+            50/50
+          </button>
+          <button 
+            disabled={extraTimeisClicked} 
+            onClick={getAdditionalTime}>
+            +10 sek
+          </button> 
+          {" | "}
           Score: <span>{score}</span>
           {" | "}
           Time remaining: <span>{counter}</span>
           <hr />
           {question.options.map(option => {
-            return mutedOptions.includes(option) ? null : (
-              <p
-                key={option.id}
+            return  (
+              <button
+                key={option}
                 className=""
                 onClick={() => checkAnswer(option)}
+                style={mutedOptions.includes(option) ? {
+                  opacity:  0.33,
+                  textDecoration: 'line-through'
+                } : undefined}
               >
                 {option}
-              </p>
+              </button>
             );
           })}
         </div>
@@ -105,7 +107,6 @@ function QuizComponent() {
   return (
     <div className="scoreboard">
       <h3>Game Over! You have {score} points </h3>
-      <p>
         The correct answers for the questions were:
         <ul>
           {questions.map((item, index) => (
@@ -117,7 +118,6 @@ function QuizComponent() {
           ))}
         </ul>
         <button onClick={restartGame}>New Game</button>
-      </p>
     </div>
   );
 }

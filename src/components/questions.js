@@ -7,6 +7,12 @@ export default [
   },
   {
     id: 1,
+    question: `Which planet is the closest to Earth?`,
+    options: [`Venus`, `Moon`, `Saturn`, `Mars`],
+    answer: `Confucius`
+  },
+  {
+    id: 2,
     question: `Name the Chinese writer, born in 551 BCE, known for preaching high moral standards.`,
     options: [`Buddha`, `Confucius`, `Mr. Miyagi`, `Mao Zedong`],
     answer: `Confucius`
@@ -19,7 +25,7 @@ export default [
   },
   {
     id: 4,
-    question: `What is the test, named after a well known computer scientist, that determines whether a machine exhibits sufficient intelligence to be indistinguishable from a human?`,
+    question: `What is the test that determines whether a machine exhibits sufficient intelligence to be indistinguishable from a human?`,
     options: [`The Benson Test`, `The Turing Test`,  `The Enigma Test`, `The Espy Test`],
     answer: `The Turing Test`
   },
