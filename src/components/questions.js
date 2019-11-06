@@ -2,14 +2,14 @@ export default [
   {
     id: 0,
     question: `What is the Italian word for pie?`,
-    options: [ `Pane`,`Pizza`, `Torta`, `Fritella`],
+    options: [`Pane`, `Pizza`, `Torta`, `Fritella`],
     answer: `Pizza`
   },
   {
     id: 1,
     question: `Which planet is the closest to Earth?`,
     options: [`Venus`, `Moon`, `Saturn`, `Mars`],
-    answer: `Confucius`
+    answer: `Venus`
   },
   {
     id: 2,
@@ -20,19 +20,29 @@ export default [
   {
     id: 3,
     question: `Which sea creature has three hearts?`,
-    options: [ `Shark`, `Jellyfish`, `Anglerfish`,`Octopus`],
+    options: [`Shark`, `Jellyfish`, `Anglerfish`, `Octopus`],
     answer: `Octopus`
   },
   {
     id: 4,
-    question: `What is the test that determines whether a machine exhibits sufficient intelligence to be indistinguishable from a human?`,
-    options: [`The Benson Test`, `The Turing Test`,  `The Enigma Test`, `The Espy Test`],
+    question: `What is the test determining whether a machine exhibits sufficient intelligence to be indistinguishable from a human?`,
+    options: [
+      `The Benson Test`,
+      `The Turing Test`,
+      `The Enigma Test`,
+      `The Espy Test`
+    ],
     answer: `The Turing Test`
   },
   {
     id: 5,
     question: `Which TV character said, 'Live long and prosper'?`,
-    options: [ `Yoda (Star Wars)`, `Morpheus (The Matrix)`, `Mr Spock (Startrek)`, `Gandalf (The Lord Of The Rings)`],
+    options: [
+      `Yoda (Star Wars)`,
+      `Morpheus (The Matrix)`,
+      `Mr Spock (Startrek)`,
+      `Gandalf (The Lord Of The Rings)`
+    ],
     answer: `Mr Spock`
   },
   {
@@ -58,5 +68,5 @@ export default [
     question: `What do butterflies taste with?`,
     options: [`Their antennae`, `Their feet`, `Their wings`, `Their eyes`],
     answer: `Their feet`
-  },
+  }
 ];
