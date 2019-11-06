@@ -1,17 +1,31 @@
 import React, { useState, useEffect } from "react";
-import originalQuestions from "./questions";
+
+import originalQuestions from "../questions";
+
 import shuffle from "../utils/shuffle";
+
+import Answer from "./Answer";
 import Button from "./Button";
+import Question from "./Question";
 
 const styles = {
-  answer: {
-    paddingBottom: 20
-  },
-
   joker: {
     padding: "5px 20px"
   }
 };
+
+export function calculateResult(questions, answers) {
+  const score = answers.filter((a, i) => a.answer === questions[i].answer)
+    .length;
+  const unanswered = answers.filter(a => a.answer === undefined).length;
+  const incorrect = questions.length - score - unanswered;
+
+  return {
+    score,
+    unanswered,
+    incorrect
+  };
+}
 
 function Quiz() {
   const [questions, setQuestions] = useState([]);
@@ -22,12 +36,8 @@ function Quiz() {
   const [mutedOptions, setMutedOptions] = useState([]);
 
   const question = questions[answers.length];
-  const score = answers.filter((a, i) => a.answer === questions[i].answer)
-    .length;
-  const unanswered = answers.filter(a => a.answer === undefined).length;
-  const incorrect = questions.length - score - unanswered;
 
-  useEffect(() => setQuestions(shuffle(originalQuestions)), []);
+  const { score, unanswered, incorrect } = calculateResult(questions, answers);
 
   function checkAnswer(answer) {
     setAnswers([...answers, { answer, counter }]);
@@ -40,6 +50,24 @@ function Quiz() {
     setFiftyFiftyIsClicked(false);
     setMutedOptions([]);
   }
+
+  function getAdditionalTime() {
+    setCounter(c => {
+      return c + 10;
+    });
+    setExtraTimeisClicked(true);
+  }
+
+  function removeWrongAnswers() {
+    const excluded = Math.floor(Math.random() * 3);
+    const muted = question.options
+      .filter(option => option !== question.answer)
+      .filter((option, i) => i !== excluded);
+    setMutedOptions(muted);
+    setFiftyFiftyIsClicked(true);
+  }
+
+  useEffect(() => setQuestions(shuffle(originalQuestions)), []);
 
   useEffect(() => {
     if (answers.length === questions.length) {
@@ -64,22 +92,6 @@ function Quiz() {
       clearInterval(timerID);
     };
   }, [questions, answers]);
-
-  function getAdditionalTime() {
-    setCounter(c => {
-      return c + 10;
-    });
-    setExtraTimeisClicked(true);
-  }
-
-  function removeWrongAnswers() {
-    const excluded = Math.floor(Math.random() * 3);
-    const muted = question.options
-      .filter(option => option !== question.answer)
-      .filter((option, i) => i !== excluded);
-    setMutedOptions(muted);
-    setFiftyFiftyIsClicked(true);
-  }
 
   if (question) {
     return (
@@ -107,22 +119,11 @@ function Quiz() {
             {" | "}
             Time remaining: <span>{counter}</span>
           </div>
-          <div>
-            <h3>{question.question}</h3>
-            {question.options.map(option => {
-              return (
-                <div key={option}>
-                  <Button
-                    onClick={() => checkAnswer(option)}
-                    disabled={mutedOptions.includes(option)}
-                    style={styles.button}
-                  >
-                    {option}
-                  </Button>
-                </div>
-              );
-            })}
-          </div>
+          <Question
+            question={question}
+            mutedOptions={mutedOptions}
+            onOptionClick={option => checkAnswer(option)}
+          />
         </div>
       </>
     );
@@ -130,30 +131,15 @@ function Quiz() {
 
   return (
     <>
-      <div>      
+      <div>
         <h3>Game Over!</h3>
-        <h4>You answered {score} questions correctly, {incorrect} questions incorrectly and skipped {unanswered} questions</h4>
+        <h4>
+          You answered {score} questions correctly, {incorrect} questions
+          incorrectly and skipped {unanswered} questions
+        </h4>
       </div>
-      {questions.map((item, index) => (
-        <div key={index} style={styles.answer}>
-          <div>
-            <b>{item.question}</b>
-          </div>
-          <div>Correct answer: {item.answer}</div>
-          <div>
-            Your answer:{" "}
-            <span
-              style={{
-                color: answers[index].answer === item.answer ? "green" : "red"
-              }}
-            >
-              {answers[index].answer}
-            </span>
-          </div>
-          <div>
-            You answered within {16 - answers[index].counter} seconds.
-          </div>
-        </div>
+      {questions.map((question, index) => (
+        <Answer question={question} answer={answers[index]} />
       ))}
 
       <Button style={styles.button} onClick={restartGame}>
