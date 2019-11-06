@@ -130,7 +130,10 @@ function Quiz() {
 
   return (
     <>
-      <h3>Game Over! You have {score} points </h3>
+      <div>      
+        <h3>Game Over!</h3>
+        <h4>You answered {score} questions correctly, {incorrect} questions incorrectly and skipped {unanswered} questions</h4>
+      </div>
       {questions.map((item, index) => (
         <div key={index} style={styles.answer}>
           <div>
