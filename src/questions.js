@@ -43,7 +43,7 @@ export default [
       `Mr Spock (Startrek)`,
       `Gandalf (The Lord Of The Rings)`
     ],
-    answer: `Mr Spock`
+    answer: `Mr Spock (Startrek)`
   },
   {
     id: 6,
